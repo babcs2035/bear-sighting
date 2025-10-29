@@ -1,0 +1,14 @@
+[tools]
+python = "3.11"
+uv = "latest"
+
+[tasks]
+"backend:setup" = "cd backend && uv venv && uv sync"
+"backend:start-db" = "cd backend && docker compose up -d --remove-orphans"
+"backend:stop-db" = "cd backend && docker compose down"
+"backend:logs-db" = "docker logs -f bear-sighting-db"
+"backend:dev" = { run = "cd backend && uv run fastapi dev --port $(dotenv get API_PORT)", depends = ["backend:start-db"] }
+"backend:start" = { run = "cd backend && uv run fastapi run main.py --port $(dotenv get API_PORT)", depends = ["backend:start-db"] }
+"backend:format" = "cd backend && ruff format ."
+"backend:lint" = "cd backend && ruff check ."
+"backend:lint-fix" = "cd backend && ruff check . --fix"

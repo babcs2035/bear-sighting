@@ -5,37 +5,37 @@ import schemas
 
 
 # -------------------------------------------------
-# CREATE (作成)
+# CREATE
 # -------------------------------------------------
 def create_sighting(db: Session, sighting: schemas.BearSightingCreate) -> models.BearSighting:
     """
-    クマの出没情報（Pydanticスキーマ）を受け取り、
-    DBモデルに変換してデータベースに保存する
+    Accepts bear sighting data (Pydantic schema),
+    converts it to a DB model, and saves it to the database.
     """
 
-    # Pydanticモデル (.model_dump()) から SQLAlchemyモデル (models.BearSighting) を作成
+    # Create an SQLAlchemy model (models.BearSighting) from the Pydantic model (.model_dump()).
     db_sighting = models.BearSighting(**sighting.model_dump())
 
-    db.add(db_sighting)  # DBセッションに追加
-    db.commit()  # データベースにコミット (書き込み)
-    db.refresh(db_sighting)  # DBから最新の状態 (自動採番されたidなど) を取得
+    db.add(db_sighting)  # Add to the DB session.
+    db.commit()  # Commit (write) to the database.
+    db.refresh(db_sighting)  # Refresh to get the latest state (e.g., auto-generated ID).
 
     return db_sighting
 
 
 # -------------------------------------------------
-# READ (読み取り)
+# READ
 # -------------------------------------------------
 def get_sighting_by_url(db: Session, source_url: str) -> models.BearSighting | None:
     """
-    情報源のURLをキーに、出没情報を1件取得する
-    (重複登録を防ぐために使用)
+    Retrieve a single sighting by its source URL.
+    (Used to prevent duplicate entries.)
     """
     return db.query(models.BearSighting).filter(models.BearSighting.source_url == source_url).first()
 
 
 def get_sightings(db: Session) -> list[models.BearSighting]:
     """
-    出没情報の一覧を取得する (ページネーション対応)
+    Retrieve a list of all bear sightings. (Pagination support can be added.)
     """
     return db.query(models.BearSighting).all()

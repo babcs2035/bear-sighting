@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-# DBモデル (models.py) のフラットな構造に対応
+# Corresponds to the flat structure of the DB model (models.py).
 class BearSightingBase(BaseModel):
     prefecture: str | None = None
     city: str | None = None
@@ -15,15 +15,15 @@ class BearSightingBase(BaseModel):
     published_at: datetime
 
 
-# 今はベースと同じだが、将来的に分割可能
+# Same as the base for now, but can be extended in the future.
 class BearSightingCreate(BearSightingBase):
     pass
 
 
-# DBから読み取ったデータ (idを含む) を返すためのスキーマ
+# Schema for returning data read from the DB (includes id).
 class BearSightingRead(BearSightingBase):
     id: int
 
     class Config:
-        # ORM (SQLAlchemyモデル) から Pydanticモデルへの自動変換を有効化
+        # Enable automatic conversion from ORM (SQLAlchemy model) to Pydantic model.
         from_attributes = True
